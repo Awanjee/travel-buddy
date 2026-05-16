@@ -26,11 +26,7 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
   String _budget = 'MidRange';
   String _energy = 'Moderate';
   String _visaIntent = 'EmbassyVisa';
-  final _prefs = <String>{
-    'architecture',
-    'history',
-    'food',
-  };
+  final _prefs = <String>{'architecture', 'history', 'food'};
 
   var _loading = false;
 
@@ -61,17 +57,16 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         'energyLevel': _energy,
         'visaIntent': _visaIntent,
         'preferences': _prefs.toList(),
-        'personalNotes':
-            _notes.text.trim().isEmpty ? null : _notes.text.trim(),
+        'personalNotes': _notes.text.trim().isEmpty ? null : _notes.text.trim(),
       });
       if (mounted) {
         context.go('/trips/${trip.id}/visa');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not create trip: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not create trip: $e')));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -137,8 +132,10 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('Where are you going?',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          'Where are you going?',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 16),
         TextField(
           controller: _destName,
@@ -166,8 +163,10 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('Your travel style',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          'Your travel style',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           value: _budget,
@@ -195,29 +194,30 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
-          children: [
-            'architecture',
-            'history',
-            'nightlife',
-            'countryside',
-            'food',
-            'shopping',
-          ].map((p) {
-            final selected = _prefs.contains(p);
-            return FilterChip(
-              label: Text(p),
-              selected: selected,
-              onSelected: (v) {
-                setState(() {
-                  if (v) {
-                    _prefs.add(p);
-                  } else {
-                    _prefs.remove(p);
-                  }
-                });
-              },
-            );
-          }).toList(),
+          children:
+              [
+                'architecture',
+                'history',
+                'nightlife',
+                'countryside',
+                'food',
+                'shopping',
+              ].map((p) {
+                final selected = _prefs.contains(p);
+                return FilterChip(
+                  label: Text(p),
+                  selected: selected,
+                  onSelected: (v) {
+                    setState(() {
+                      if (v) {
+                        _prefs.add(p);
+                      } else {
+                        _prefs.remove(p);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
         ),
       ],
     );
@@ -227,25 +227,31 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('Visa situation',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          'Visa situation',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 8),
         const Text(
           'We provide checklists and timelines only — always verify with official sources.',
         ),
         const SizedBox(height: 16),
-        ...[
-          ('NotSure', 'Not sure yet'),
-          ('VisaFree', 'Visa-free / eligible without embassy'),
-          ('EVisa', 'Planning e-Visa'),
-          ('EmbassyVisa', 'Need embassy / consulate visa'),
-          ('AlreadyHaveVisa', 'Already have visa'),
-        ].map((e) => RadioListTile<String>(
-              title: Text(e.$2),
-              value: e.$1,
-              groupValue: _visaIntent,
-              onChanged: (v) => setState(() => _visaIntent = v!),
-            )),
+        RadioGroup<String>(
+          groupValue: _visaIntent,
+          onChanged: (v) => setState(() => _visaIntent = v!),
+          child: Column(
+            children: [
+              for (final e in [
+                ('NotSure', 'Not sure yet'),
+                ('VisaFree', 'Visa-free / eligible without embassy'),
+                ('EVisa', 'Planning e-Visa'),
+                ('EmbassyVisa', 'Need embassy / consulate visa'),
+                ('AlreadyHaveVisa', 'Already have visa'),
+              ])
+                RadioListTile<String>(value: e.$1, title: Text(e.$2)),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -254,14 +260,15 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('Dates & notes',
-            style: Theme.of(context).textTheme.headlineSmall),
+        Text('Dates & notes', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(_start == null
-              ? 'Start date (optional)'
-              : 'Start: ${_start!.toLocal().toString().split(' ').first}'),
+          title: Text(
+            _start == null
+                ? 'Start date (optional)'
+                : 'Start: ${_start!.toLocal().toString().split(' ').first}',
+          ),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
             final d = await showDatePicker(
@@ -275,9 +282,11 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(_end == null
-              ? 'End date (optional)'
-              : 'End: ${_end!.toLocal().toString().split(' ').first}'),
+          title: Text(
+            _end == null
+                ? 'End date (optional)'
+                : 'End: ${_end!.toLocal().toString().split(' ').first}',
+          ),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
             final d = await showDatePicker(
