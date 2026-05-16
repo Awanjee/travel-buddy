@@ -59,51 +59,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _trips == null || _trips!.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.map_outlined,
-                            size: 64,
-                            color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'No trips yet',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Answer a few questions and we\'ll help with visa guidance, places, and your itinerary.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.map_outlined,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _trips!.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, i) {
-                      final trip = _trips![i];
-                      return Card(
-                        child: ListTile(
-                          title: Text(trip.destinationCountryName),
-                          subtitle: Text(
-                            '${trip.status} · ${trip.partySize} traveler(s)',
-                          ),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () => _openTrip(trip),
-                        ),
-                      );
-                    },
-                  ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'No trips yet',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Answer a few questions and we\'ll help with visa guidance, places, and your itinerary.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: _trips!.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
+                itemBuilder: (context, i) {
+                  final trip = _trips![i];
+                  return Card(
+                    child: ListTile(
+                      title: Text(trip.destinationCountryName),
+                      subtitle: Text(
+                        '${trip.status} · ${trip.partySize} traveler(s)',
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => _openTrip(trip),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 

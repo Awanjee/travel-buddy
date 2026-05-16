@@ -19,7 +19,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: _AuthRefresh(ref),
     redirect: (context, state) {
       final loggedIn = auth.value ?? false;
-      final onAuth = state.matchedLocation == '/login' ||
+      final onAuth =
+          state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
       if (!loggedIn && !onAuth) return '/login';
@@ -27,17 +28,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      GoRoute(path: '/', builder: (_, _) => const HomeScreen()),
       GoRoute(
         path: '/trips/new',
-        builder: (_, __) => const QuestionnaireScreen(),
+        builder: (_, _) => const QuestionnaireScreen(),
       ),
       GoRoute(
         path: '/trips/:id/visa',
-        builder: (_, state) =>
-            VisaScreen(tripId: state.pathParameters['id']!),
+        builder: (_, state) => VisaScreen(tripId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/trips/:id/discover',
@@ -55,7 +55,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
 class _AuthRefresh extends ChangeNotifier {
   _AuthRefresh(this._ref) {
-    _ref.listen(authStateProvider, (_, __) => notifyListeners());
+    _ref.listen(authStateProvider, (_, _) => notifyListeners());
   }
   final Ref _ref;
 }
