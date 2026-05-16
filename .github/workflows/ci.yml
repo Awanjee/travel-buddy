@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: travelbuddy
+          POSTGRES_PASSWORD: travelbuddy
+          POSTGRES_DB: travelbuddy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U travelbuddy"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Restore and build API
+        run: |
+          dotnet restore backend/TravelBuddy.sln
+          dotnet build backend/TravelBuddy.sln --no-restore -c Release
+      - name: Run API (smoke)
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          Database__UseSqlite: "true"
+          ConnectionStrings__DefaultConnection: "Data Source=ci-travelbuddy.db"
+          Jwt__Key: ci-test-secret-key-min-32-chars-long!!
+        run: |
+          dotnet run --project backend/src/TravelBuddy.Api/TravelBuddy.Api.csproj --no-build -c Release &
+          sleep 8
+          curl -sf http://localhost:5280/health
+
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Analyze and test
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
