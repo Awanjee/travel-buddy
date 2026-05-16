@@ -169,7 +169,7 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
-          value: _budget,
+          initialValue: _budget,
           decoration: const InputDecoration(labelText: 'Budget'),
           items: const [
             DropdownMenuItem(value: 'Budget', child: Text('Budget')),
@@ -180,7 +180,7 @@ class _QuestionnaireScreenState extends ConsumerState<QuestionnaireScreen> {
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
-          value: _energy,
+          initialValue: _energy,
           decoration: const InputDecoration(labelText: 'Energy level'),
           items: const [
             DropdownMenuItem(value: 'Low', child: Text('Relaxed')),
